@@ -57,10 +57,6 @@ class Se3Extreme3DPro(DeviceBase, Node):
             self.last_gripper_toggle_time = current_time  # 마지막 실행 시간 업데이트
             print(f"[DEBUG] Gripper state changed: {self._close_gripper}")
 
-        # # 버튼 11번 (초기화)
-        # if msg.buttons[11] == 1:
-        #     print("[DEBUG] Reset button pressed! Returning to initial position.")
-        #     self.reset()  # ✅ 초기화 실행
 
     def add_callback(self, key: int, func):
         """Add additional functions to bind joystick buttons"""
