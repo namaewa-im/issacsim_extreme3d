@@ -10,6 +10,6 @@ Teleop devices for issacsim
 
 ### 2025-03-12 issue  
 
-[./isaaclab.sh -p scripts/tools/record_demos.py --task Isaac-Stack-Cube-Franka-IK-Rel-v0 --teleop_device extreme3d --dataset_file ./datasets/dataset.hdf5 --num_demos 10](https://github.com/user-attachments/assets/e853dc10-e1a5-4532-8b36-a914bcaab072)
+[./isaaclab.sh -p scripts/tools/record_demos.py --task Isaac-Stack-Cube-Franka-IK-Rel-v0 --teleop_device extreme3d --dataset_file ./datasets/dataset.hdf5 --num_demos 10](https://github.com/user-attachments/assets/be65ed46-fcec-4e4e-86ff-a5d8da123137)
 
 move_x가 task space에서 직선으로 움직이지 않는 문제
