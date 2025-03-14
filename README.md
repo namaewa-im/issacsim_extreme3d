@@ -13,3 +13,18 @@ Teleop devices for issacsim
 [./isaaclab.sh -p scripts/tools/record_demos.py --task Isaac-Stack-Cube-Franka-IK-Rel-v0 --teleop_device extreme3d --dataset_file ./datasets/dataset.hdf5 --num_demos 10](https://github.com/user-attachments/assets/be65ed46-fcec-4e4e-86ff-a5d8da123137)
 
 move_x가 task space에서 직선으로 움직이지 않는 문제
+
+            # get keyboard command
+            delta_pose, gripper_command = teleop_interface.advance()
+            # convert to torch
+            delta_pose = torch.tensor(delta_pose, dtype=torch.float, device=env.device).repeat(env.num_envs, 1)
+            # compute actions based on environment
+            actions = pre_process_actions(delta_pose, gripper_command)
+--> 
+
+            # get keyboard command
+            delta_pose, gripper_command = teleop_interface.advance()
+            delta_pose = delta_pose.astype("float32")
+            # convert to torch
+            delta_pose = torch.tensor(delta_pose, device=env.device).repeat(env.num_envs, 1)
+            actions = pre_process_actions(delta_pose, gripper_command)
