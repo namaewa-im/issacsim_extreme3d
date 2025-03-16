@@ -15,8 +15,8 @@ class Se3Extreme3DPro(DeviceBase, Node):
         if not rclpy.ok():
             rclpy.init()
 
-        DeviceBase.__init__(self)  # 기존 디바이스 초기화
-        Node.__init__(self, 'se3_extreme3dpro')  # ROS 2 노드 초기화
+        DeviceBase.__init__(self)
+        Node.__init__(self, 'se3_extreme3dpro')
 
         self.pos_sensitivity = pos_sensitivity
         self.rot_sensitivity = rot_sensitivity
@@ -30,32 +30,35 @@ class Se3Extreme3DPro(DeviceBase, Node):
         self._close_gripper = False
         self._delta_pose = np.zeros(6)
         self._additional_callbacks = {}
-
-        self.last_gripper_toggle_time = time.time()  # 마지막 그리퍼 토글 시간 기록
+        self.last_gripper_toggle_time = time.time()
 
     def _on_joy_event(self, msg: Joy):
         """ROS 2 Joy message callback"""
-        # print("[DEBUG] _on_joy_event() called!")
-
-        # 현재 시간 확인 (그리퍼 입력 제한)
         current_time = time.time()
 
         # 조이스틱 입력 매핑
-        rotate_roll = msg.axes[0] * self.pos_sensitivity if abs(msg.axes[0]) > self.dead_zone else 0.0
-        rotate_pitch = msg.axes[1] * self.pos_sensitivity if abs(msg.axes[1]) > self.dead_zone else 0.0
-        rotate_yaw = msg.axes[2] * self.pos_sensitivity if abs(msg.axes[2]) > self.dead_zone else 0.0
-        move_z = msg.axes[3] * self.rot_sensitivity if abs(msg.axes[3]) > self.dead_zone * 30 else 0.0
-        move_y = -msg.axes[4] * self.rot_sensitivity if abs(msg.axes[4]) > self.dead_zone else 0.0
-        move_x = -msg.axes[5] * self.rot_sensitivity if abs(msg.axes[5]) > self.dead_zone else 0.0
+        move_x = msg.axes[1] * self.pos_sensitivity if abs(msg.axes[1]) > self.dead_zone else 0.0  # 앞뒤 이동
+        move_y = msg.axes[0] * self.pos_sensitivity if abs(msg.axes[0]) > self.dead_zone else 0.0
+        move_z = 0.0
 
-        # delta_pose 업데이트
+        rotate_roll = msg.axes[4] * self.pos_sensitivity if abs(msg.axes[4]) > self.dead_zone else 0.0
+        rotate_pitch = msg.axes[5] * self.pos_sensitivity if abs(msg.axes[5]) > self.dead_zone else 0.0
+        rotate_yaw = msg.axes[2] * self.rot_sensitivity if abs(msg.axes[2]) > self.dead_zone else 0.0  # 그리퍼 회전
+
+
+        # 버튼 1을 누르면 하강, 버튼 4를 누르면 상승
+        if msg.buttons[0] == 1:
+            move_z = -self.pos_sensitivity
+        if msg.buttons[3] == 1:
+            move_z = self.pos_sensitivity
+        
         self._delta_pose = np.array([move_x, move_y, move_z, rotate_roll, rotate_pitch, rotate_yaw])
 
-        # 버튼 0번 (그리퍼 조작) - 0.5초에 한 번만 실행
-        if msg.buttons[0] == 1 and (current_time - self.last_gripper_toggle_time) > 1.0:
+        # 버튼 2번 (그리퍼 조작)
+        if msg.buttons[1] == 1 and (current_time - self.last_gripper_toggle_time) > 0.7:
             self._close_gripper = not self._close_gripper
-            self.last_gripper_toggle_time = current_time  # 마지막 실행 시간 업데이트
-            print(f"[DEBUG] Gripper state changed: {self._close_gripper}")
+            self.last_gripper_toggle_time = current_time
+            # print(f"[DEBUG] Gripper state changed: {self._close_gripper}")
 
 
     def add_callback(self, key: int, func):
