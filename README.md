@@ -40,4 +40,6 @@ move_x가 task space에서 직선으로 움직이지 않는 문제
 기능 추가: 6번 버튼으로 R (reset) 기능 수행
 ROS2 node를 비동기적으로 실행하고 /joy 입력을 받아오는 기능 구현
 
-annotated_demos.py, generated_dataset.py, robomimic/train.py, robomimic/play.py 실행 확인
+annotated_demos.py, generated_dataset.py, robomimic/train.py, robomimic/play.py 실행 확인  
+
+[Screencast from 03-17-2025 01:14:03 AM.webm](https://github.com/user-attachments/assets/88298c44-c288-4a6a-ba93-f94365f29ab4)
